@@ -1,0 +1,55 @@
+Running the GUI Application on Docker Containers
+Docker TechnologyOn 2013, Solomon Hykes introduced the biggest innovation of decades called Docker & within 2 years docker & container technology became the most demanding technology in the Industry.
+.
+.
+𝗦𝘂𝗺𝗺𝗲𝗿𝟮𝟬𝟮𝟭
+𝐓𝐚𝐬𝐤_𝟎𝟐
+< 𝑹𝒖𝒏 𝑭𝒊𝒓𝒆𝒇𝒐𝒙 >
+𝐓𝐚𝐬𝐤 𝐃𝐞𝐬𝐜𝐫𝐢𝐩𝐭𝐢𝐨𝐧 📄
+1. Launch a container on docker in GUI mode
+2. Run any GUI software on the container
+.
+.
+.
+Step 1. To install any OS, we need respective image. Image contain all the data, that we need to run that particular OS.
+Similarly to launch a Docker Container or OS we need to use Docker Image. There are thousands of image on Docker repository called Docker Hub -  https://hub.docker.com/.
+Most of the images on Docker Hub is free to use. Let's say we want a Ubuntu 18.04 OS, then to launch it using Docker we at first need the Docker Image of Ubuntu 18.04. Go to Docker Hub & search "Ubuntu" & you will find the official image.
+Now we gonna use Docker to download that image on our local system, in my case it's RHEL8 system which is my Docker Host.
+Run the command <docker pull centos:latest>. And to check use <docker images> command
+.
+.
+Step 2. Launch the container 
+Now here you will see the actual power of Docker. As I had already told that we need Docker Image to launch the container. So, now as we have the images, let's launch one container.
+Run the command < docker run -it centos>
+You will see within 1 second, your terminal changed & now you are inside a new terminal. The most interesting part here is this terminal is not your Docker Host (RHEL8) terminal. It's the terminal of Centos Container.
+.
+.
+Step 3. Now in your "Dockerfile" put the below mentioned code…
+FROM centos:8
+RUN yum install net-tools -y
+CMD ifconfig
+Save the file & now let's understand how this file has been written. Dockerfile has it's own specific keywords to tell certain things. Like we used "FROM" keyword to tell use "centos:8" image & on top of this image we will run our program.
+Next to run any program we need to install the required software, for that we used "RUN" keyword & tell to use "yum install net-tools -y" command to install the software. Just note one thing that as we are using "centos:8" to run our program that's why to install the software we used "yum" command.
+Next we used "CMD" keyword to tell as soon as the container launch run "ifconfig" command.
+.
+.
+Step 4.Customized Docker Image Building :
+Let's say we want to run "firefox" program inside Docker Container. So, what we can do is - We can create one Docker Image & can say whenever any container launch from this Image, run the Firefox program. So, let's create the "Dockerfile"…
+FROM centos:8
+RUN yum install firefox -y
+CMD firefox
+As we can notice it's a short basic "Dockerfile" which is using "centos:8" image & installing "firefox" software in it. Then finally it's starting the Firefox software using "CMD" keyword.
+.
+.
+Step 5. Now let's build the image…
+Logic is Firefox need one environmental variable to run itself. This shell variable actually help Firefox to project it's gui tab on screen. Now we definitely know that Docker Container don't has a gui screen to run the Firefox, that's why we need to tell the container to use the host system's gui screen & for that we gonna use that environmental variable using the option "env" in "docker run" command. So, run the below mentioned command…
+.
+.
+docker run -it --name firefoxos2 --env="DISPLAY" --net=host myfirefox:v1
+Now it's obvious that you might be thinking why we need "net" option, in this command. Here, this is a networking concept, but in basic if we want to understand, then you can think this option goanna connect your docker container with your RHEL8 docker host's main network card. This option is actually needed because after launching container it will provide us the Firefox software in GUI window, now whatever we are searching in this window needs to go to the Docker Container via Docker Host. For that connectivity we add our Docker Host network to the container.
+That's all… Now let's see it in action in the below GIF…
+.
+.
+.
+Thanks Everyone for reading.
+~Tanmay Pathare
